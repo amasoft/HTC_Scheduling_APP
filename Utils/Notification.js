@@ -4,9 +4,27 @@ import qrcode from "qrcode-terminal";
 import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Tasks.js";
 import twilio from "twilio";
 // Initialize the WhatsApp client
+
 const client = new Client({
-  authStrategy: new LocalAuth(),
+  authStrategy: new LocalAuth({
+    dataPath: "/tmp/.wwebjs_auth", // Railway allows writes to /tmp
+  }),
+  puppeteer: {
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage", // Prevents memory issues
+      "--single-process", // Reduces resource usage
+    ],
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // Only if using custom Chromium
+  },
+  restartOnCrash: true, // Auto-reconnect on failure
 });
+
+// const client = new Client({
+//   authStrategy: new LocalAuth(),
+// });
 
 // Generate QR code for authentication
 client.on("qr", (qr) => {
