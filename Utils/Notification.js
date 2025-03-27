@@ -1,15 +1,25 @@
 import pkg from "whatsapp-web.js";
 const { Client, LocalAuth } = pkg;
 import qrcodeTerminal from "qrcode-terminal";
+import dotenv from "dotenv";
 
 import qrcode from "qrcode";
 import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Tasks.js";
 import twilio from "twilio";
-// Initialize the WhatsApp client
 
+import { v2 as cloudinary } from "cloudinary";
+dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// Initialize the WhatsApp client
 const client = new Client({
   authStrategy: new LocalAuth({
-    dataPath: "/tmp/.wwebjs_auth", // Railway allows writes to /tmp
+    // dataPath: "/tmp/.wwebjs_auth", // Railway allows writes to /tmp
+    dataPath: "/app/.wwebjs_auth",
   }),
   puppeteer: {
     headless: true,
@@ -30,11 +40,23 @@ const client = new Client({
 
 // Generate QR code for authentication
 client.on("qr", async (qr) => {
-  qrcode.generate(qr, { small: true });
+  console.log("QR REACHED");
+  qrcodeTerminal.generate(qr, { small: true });
+  console.log("Scan this QR code with WhatsApp:");
   qrcode.toFile("qr.png", qr);
   const qrDataURL = await qrcode.toDataURL(qr);
   console.log(`Scan this QR Code: ${qrDataURL}`);
-  console.log("Scan this QR code with WhatsApp:");
+  const filePath = "./public/qr.png";
+  await qrcode.toFile(filePath, qr);
+
+  const filePath_clo = "qr.png";
+  await qrcode.toFile(filePath_clo, qr);
+  const uploadResponse = await cloudinary.uploader.upload(filePath_clo, {
+    folder: "HTC_DATA_scan", // Folder in Cloudinary
+  });
+
+  console.log("✅ Upload Successful:", uploadResponse.secure_url);
+  return uploadResponse.secure_url;
 });
 
 // Log when the client is ready

@@ -1,3 +1,2 @@
-2025/03/26-00:47:00.450 2b90 Reusing MANIFEST C:\Users\user\Documents\Official Projects\HTCApp\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
-2025/03/26-00:47:00.451 2b90 Recovering log #3
-2025/03/26-00:47:00.451 2b90 Reusing old log C:\Users\user\Documents\Official Projects\HTCApp\.wwebjs_auth\session\Default\Session Storage/000003.log 
+2025/03/27-02:18:44.508 42e8 Creating DB C:\Users\user\Documents\Official Projects\HTCApp\.wwebjs_auth\session\Default\Session Storage since it was missing.
+2025/03/27-02:18:44.521 42e8 Reusing MANIFEST C:\Users\user\Documents\Official Projects\HTCApp\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
