@@ -43,7 +43,7 @@ app.listen(PORT, async function () {
 
 // Optional: Schedule tasks to run periodically using node-cron
 // Example: Run every day at 8 AM
-cron.schedule("* * * * *", async () => {
+cron.schedule("30 8 * * 4", async () => {
   console.log("Running scheduled tasks...");
   try {
     await dispatchTaskPsalm();
