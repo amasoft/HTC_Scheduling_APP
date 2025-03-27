@@ -19,17 +19,21 @@ cloudinary.config({
 const client = new Client({
   authStrategy: new LocalAuth({
     // dataPath: "/tmp/.wwebjs_auth", // Railway allows writes to /tmp
-    dataPath: "/app/.wwebjs_auth",
+    dataPath: "./wwebjs_auth", // Change from /tmp to a persistent location,
   }),
   puppeteer: {
     headless: true,
+    executablePath:
+      process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/google-chrome-stable",
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage", // Prevents memory issues
-      "--single-process", // Reduces resource usage
+      "--disable-dev-shm-usage",
+      "--single-process",
+      "--disable-gpu",
+      "--window-size=1920x1080", // Helps prevent crashes
+      "--disable-software-rasterizer",
     ],
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // Only if using custom Chromium
   },
   restartOnCrash: true, // Auto-reconnect on failure
 });
@@ -78,7 +82,10 @@ client.on("ready", () => {
 client.on("message", (mes) => {
   console.log("message Received " + mes.body);
 });
-
+client.on("disconnected", (reason) => {
+  console.log(`Client disconnected due to ${reason}. Restarting...`);
+  client.initialize();
+});
 // Start the client
 client.initialize().catch((err) => {
   console.log("Failed Initialization", err);
