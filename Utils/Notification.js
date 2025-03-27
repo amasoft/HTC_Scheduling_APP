@@ -1,6 +1,8 @@
 import pkg from "whatsapp-web.js";
 const { Client, LocalAuth } = pkg;
-import qrcode from "qrcode-terminal";
+import qrcodeTerminal from "qrcode-terminal";
+
+import qrcode from "qrcode";
 import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Tasks.js";
 import twilio from "twilio";
 // Initialize the WhatsApp client
@@ -27,8 +29,9 @@ const client = new Client({
 // });
 
 // Generate QR code for authentication
-client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
+client.on("qr", async (qr) => {
+  qrcodeTerminal.generate(qr, { small: true });
+  await qrcode.toFile("qr.png", qr); // Save as image
   console.log("Scan this QR code with WhatsApp:");
 });
 
