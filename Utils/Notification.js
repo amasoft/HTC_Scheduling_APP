@@ -29,9 +29,8 @@ const client = new Client({
 // });
 
 // Generate QR code for authentication
-client.on("qr", async (qr) => {
-  qrcodeTerminal.generate(qr, { small: true });
-  await qrcode.toFile("qr.png", qr); // Save as image
+client.on("qr", (qr) => {
+  qrcode.generate(qr, { small: true });
   console.log("Scan this QR code with WhatsApp:");
 });
 
