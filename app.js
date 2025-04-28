@@ -4,9 +4,10 @@ import cors from "cors";
 import cron from "node-cron";
 import userRoutes from "./src/Routes/UsersRoutes.js";
 import taskRoute from "./src/Routes/TasksRoutes.js";
+import { getClient, initializeWhatsappClient } from "./Utils/Notification.js";
 import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Utils/Tasks.js";
-import { sendSMSNotification } from "./Utils/Notification.js";
-// import { Notifications } from "./Utils/Notification.js";
+// import { sendSMSNotification } from "./Utils/Notification.js";
+import { Notifications } from "./Utils/Notification.js";
 
 const app = express();
 const PORT = process.env.PORT || 4001;
@@ -26,33 +27,108 @@ function delay(ms) {
 }
 
 // Start the server
+// app.listen(PORT, async function () {
+//   console.log(`Connection successful on port ${PORT}`);
+//   try {
+//     await connectDB();
+//     console.log("Database connected successfully");
+//   } catch (dbError) {
+//     console.error("Database connection failed:", dbError);
+//     process.exit(1); // Exit if DB connection fails
+//   }
+//   // Notifications(" testing Notification"); // Uncomment if you want to run notifications on startup
+//   try {
+//     await initializeWhatsappClient();
+//     const whtasappClient = await getClient();
+//     console.log("whaatappClient", whtasappClient);
+//     whtasappClient.on("ready", async () => {
+//       console.log("Client is ready and connected!");
+//       await dispatchTaskPsalm();
+//     }); // Run tasks immediately when the server starts
+//     // await dispatchTaskCommunion();
+//     // sendSMSNotification();
+//     // console.log("All tasks processed and notifications sent.");
+//   } catch (error) {
+//     console.error("Error processing tasks:", error);
+//   }
+// });
+
 app.listen(PORT, async function () {
-  console.log(`Connection successful on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 
   try {
-    // Run tasks immediately when the server starts
-    // await dispatchTaskPsalm();
-    // await dispatchTaskCommunion();
-    // sendSMSNotification();
-    // console.log("All tasks processed and notifications sent.");
+    // Initialize client
+    initializeWhatsappClient();
+    // const whatsappClient = await getClient();
+
+    //   console.log("WhatsApp client obtained. Current state:", {
+    //     hasPuppeteerPage: !!whatsappClient.pupPage,
+    //     hasBrowser: !!whatsappClient.pupBrowser,
+    //     eventsRegistered: whatsappClient._eventsCount,
+    //   });
+
+    //   // Add comprehensive event listeners
+    //   whatsappClient.on("qr", (qr) => {
+    //     console.log("QR CODE REQUIRED - Scan this:", qr);
+    //     // You should implement QR code display here
+    //   });
+
+    //   await whatsappClient.on("authenticated", () => {
+    //     console.log("AUTHENTICATION SUCCESSFUL app");
+    //   });
+
+    //   whatsappClient.on("auth_failure", (msg) => {
+    //     console.error("AUTH FAILED:", msg);
+    //   });
+
+    //   await whatsappClient.on("ready", async () => {
+    //     console.log("READY EVENT FIRED - Client is fully connected");
+    //     try {
+    //       // await dispatchTaskPsalm()
+    //       cron.schedule("* * * * *", async () => {
+    //         console.log("Running scheduled tasks...");
+    //         try {
+    //           await dispatchTaskPsalm();
+    //           await dispatchTaskCommunion();
+    //           console.log("Scheduled tasks completed.");
+    //         } catch (error) {
+    //           console.error("Error running scheduled tasks:", error);
+    //         }
+    //       });
+    //       console.log("Tasks completed");
+    //     } catch (taskError) {
+    //       console.error("Task error:", taskError);
+    //     }
+    //   });
+
+    //   whatsappClient.on("disconnected", (reason) => {
+    //     console.log("DISCONNECTED:", reason);
+    //   });
+
+    //   // Force check if already authenticated
+    //   if (whatsappClient.pupPage && whatsappClient.pupBrowser) {
+    //     console.log("Puppeteer components exist - checking session...");
+    //     // Sometimes the ready event gets stuck - this might trigger it
+    //     whatsappClient.emit("ready");
+    //   }
   } catch (error) {
-    console.error("Error processing tasks:", error);
+    console.error("Initialization error:", error);
   }
 });
 
 // Optional: Schedule tasks to run periodically using node-cron
 // Example: Run every day at 8 AM
-cron.schedule("30 8 * * 4", async () => {
-  console.log("Running scheduled tasks...");
-  try {
-    await dispatchTaskPsalm();
-    await dispatchTaskCommunion();
-    console.log("Scheduled tasks completed.");
-  } catch (error) {
-    console.error("Error running scheduled tasks:", error);
-  }
-});
+// cron.schedule("30 8 * * 4", async () => {
+//   console.log("Running scheduled tasks...");
+//   try {
+//     await dispatchTaskPsalm();
+//     // await dispatchTaskCommunion();
+//     console.log("Scheduled tasks completed.");
+//   } catch (error) {
+//     console.error("Error running scheduled tasks:", error);
+//   }
+// });
 
 // import express from "express";
 // import connectDB from "./Helpers/db.js";
