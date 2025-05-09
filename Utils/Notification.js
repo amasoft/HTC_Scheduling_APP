@@ -28,26 +28,42 @@ export async function initializeWhatsappClient() {
     return client;
   }
 
+  // client = new Client({
+  //   authStrategy: new LocalAuth({
+  //     dataPath: "./wwebjs_auth", // Persistent location
+  //   }),
+  //   puppeteer: {
+  //     headless: true,
+  //     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+  //     args: [
+  //       "--no-sandbox",
+  //       "--disable-setuid-sandbox",
+  //       "--disable-dev-shm-usage",
+  //       "--single-process",
+  //       "--disable-gpu",
+  //       "--window-size=1920x1080",
+  //       "--disable-software-rasterizer",
+  //     ],
+  //   },
+  //   restartOnCrash: true,
+  // });
   client = new Client({
-    authStrategy: new LocalAuth({
-      dataPath: "./wwebjs_auth", // Persistent location
-    }),
     puppeteer: {
-      headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--single-process",
+        "--disable-dev-shm-usage", // Add this for Docker
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process", // <- this one doesn't work on Windows
         "--disable-gpu",
-        "--window-size=1920x1080",
-        "--disable-software-rasterizer",
       ],
+      headless: true,
     },
-    restartOnCrash: true,
   });
-
   client.on("qr", async (qr) => {
     console.log("QR code received, generating...");
 
