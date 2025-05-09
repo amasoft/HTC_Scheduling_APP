@@ -1,8 +1,8 @@
 node_modules/
-.wwebjs_auth
 .wwebjs_cache
 docs/
 htcbiodata.xlsx
 app copy.js
 .env
 .vercel
+wwebjs_auth/

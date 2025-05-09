@@ -1,0 +1,147 @@
+import pkg from "whatsapp-web.js";
+const { Client, LocalAuth } = pkg;
+import qrcodeTerminal from "qrcode-terminal";
+import dotenv from "dotenv";
+
+import qrcode from "qrcode";
+import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Tasks.js";
+import twilio from "twilio";
+
+import { v2 as cloudinary } from "cloudinary";
+dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+// Initialize the WhatsApp client
+const client = new Client({
+  authStrategy: new LocalAuth({
+    // dataPath: "/tmp/.wwebjs_auth", // Railway allows writes to /tmp
+    dataPath: "./wwebjs_auth", // Change from /tmp to a persistent location,
+  }),
+  puppeteer: {
+    headless: true,
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--single-process",
+      "--disable-gpu",
+      "--window-size=1920x1080", // Helps prevent crashes
+      "--disable-software-rasterizer",
+    ],
+  },
+  restartOnCrash: true, // Auto-reconnect on failure
+});
+
+// const client = new Client({
+//   authStrategy: new LocalAuth(),
+// });
+
+// Generate QR code for authentication
+client.on("qr", async (qr) => {
+  console.log("QR REACHED");
+  qrcodeTerminal.generate(qr, { small: true });
+  console.log("Scan this QR code with WhatsApp:");
+  qrcode.toFile("qr.png", qr);
+  const qrDataURL = await qrcode.toDataURL(qr);
+  console.log(`Scan this QR Code: ${qrDataURL}`);
+  const filePath = "./public/qr.png";
+  await qrcode.toFile(filePath, qr);
+
+  const filePath_clo = "qr.png";
+  await qrcode.toFile(filePath_clo, qr);
+  const uploadResponse = await cloudinary.uploader.upload(filePath_clo, {
+    folder: "HTC_DATA_scan", // Folder in Cloudinary
+  });
+
+  console.log("✅ Upload Successful:", uploadResponse.secure_url);
+  return uploadResponse.secure_url;
+});
+
+// Log when the client is ready
+client.on("ready", () => {
+  console.log("WhatsApp Client is ready!");
+  // dispatchTaskPsalm();
+  // dispatchTaskCommunion();
+  cron.schedule("* * * * *", async () => {
+    console.log("Running scheduled tasks...");
+    try {
+      await dispatchTaskPsalm();
+      await dispatchTaskCommunion();
+      console.log("Scheduled tasks completed.");
+    } catch (error) {
+      console.error("Error running scheduled tasks:", error);
+    }
+  });
+});
+client.on("message", (mes) => {
+  console.log("message Received " + mes.body);
+});
+client.on("disconnected", (reason) => {
+  console.log(`Client disconnected due to ${reason}. Restarting...`);
+  client.initialize();
+});
+// Start the client
+client.initialize().catch((err) => {
+  console.log("Failed Initialization", err);
+});
+console.log("DATA REACHED HERE");
+// Function to send notifications to a WhatsApp group
+async function Notifications(message) {
+  try {
+    console.log("Sending message:", message);
+    // console.log("Notifications:", client);
+    if (!client.info) {
+      console.error("Client is not ready or authenticated.");
+      return;
+    }
+    // Get all chats
+    const chats = await client.getChats();
+    // console.log("CHATSSS>>" + JSON.stringify(chats));
+    // Find the group by name
+    const group = chats.find((chat) => {
+      // console.log("GRoup>>  " + chat.isGroup);
+      // console.log("chat.name>>  " + chat.name);
+      // return chat.isGroup && chat.name === "Testing"; // Ensure the group name matches exactly
+      return chat.name === "Testing"; // Ensure the group name matches exactly
+    });
+
+    if (group) {
+      // Send the message to the group
+      await client.sendMessage(group.id._serialized, message);
+      console.log("Message sent to group:", group.name);
+    } else {
+      console.error("Group 'Testing' not found!");
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+  }
+}
+
+const sendSMSNotification = async (message, mobileNumber) => {
+  // console.log(0, dotenv.config());
+  // console.log(1, process.env.ACCOUNT_SSID);
+  // console.log(0, process.env.AUT_TOKEN);
+  const accountssid = process.env.ACCOUNT_SSID;
+  const autToken = process.env.AUT_TOKEN;
+
+  const client = new twilio(accountssid, autToken);
+
+  // const fromNumber = "+15177934255";// prevoiusly
+  const fromNumber = process.env.FROM_NUMBER; // currently
+  const receipentNumber = mobileNumber;
+  client.messages
+    .create({
+      body: message,
+      from: fromNumber,
+      to: receipentNumber,
+    })
+    .then((message) => console.log("patrick message sent succesfully"))
+    .catch((error) => console.log("error sending message ", error));
+};
+// Export the Notifications function
+export { Notifications, sendSMSNotification };

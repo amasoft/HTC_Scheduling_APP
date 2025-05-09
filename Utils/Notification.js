@@ -1,67 +1,153 @@
 import pkg from "whatsapp-web.js";
 const { Client, LocalAuth } = pkg;
 import qrcodeTerminal from "qrcode-terminal";
-
+import dotenv from "dotenv";
 import qrcode from "qrcode";
 import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Tasks.js";
 import twilio from "twilio";
-// Initialize the WhatsApp client
+import { v2 as cloudinary } from "cloudinary";
+import cron from "node-cron"; // ✅ Added missing import
 
-const client = new Client({
-  authStrategy: new LocalAuth({
-    dataPath: "/tmp/.wwebjs_auth", // Railway allows writes to /tmp
-  }),
-  puppeteer: {
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage", // Prevents memory issues
-      "--single-process", // Reduces resource usage
-    ],
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // Only if using custom Chromium
-  },
-  restartOnCrash: true, // Auto-reconnect on failure
+dotenv.config();
+
+let client;
+let isInitialized = false;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+// Initialize the WhatsApp client
+export async function initializeWhatsappClient() {
+  console.log("isInitialized..." + isInitialized);
+
+  if (isInitialized) {
+    console.log("WhatsApp client is already initialized");
+    return client;
+  }
+
+  // client = new Client({
+  //   authStrategy: new LocalAuth({
+  //     dataPath: "./wwebjs_auth", // Persistent location
+  //   }),
+  //   puppeteer: {
+  //     headless: true,
+  //     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+  //     args: [
+  //       "--no-sandbox",
+  //       "--disable-setuid-sandbox",
+  //       "--disable-dev-shm-usage",
+  //       "--single-process",
+  //       "--disable-gpu",
+  //       "--window-size=1920x1080",
+  //       "--disable-software-rasterizer",
+  //     ],
+  //   },
+  //   restartOnCrash: true,
+  // });
+  client = new Client({
+    puppeteer: {
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage", // Add this for Docker
+        "--disable-accelerated-2d-canvas",
+        "--no-first-run",
+        "--no-zygote",
+        "--single-process", // <- this one doesn't work on Windows
+        "--disable-gpu",
+      ],
+      headless: true,
+    },
+  });
+  client.on("qr", async (qr) => {
+    console.log("QR code received, generating...");
+
+    qrcodeTerminal.generate(qr, { small: true });
+
+    // Save and upload QR to Cloudinary
+    const filePath = "qr.png";
+    await qrcode.toFile(filePath, qr);
+
+    try {
+      const uploadResponse = await cloudinary.uploader.upload(filePath, {
+        folder: "HTC_DATA_scan",
+      });
+      console.log("✅ QR Upload Successful:", uploadResponse.secure_url);
+    } catch (error) {
+      console.error("❌ Failed to upload QR to Cloudinary:", error);
+    }
+  });
+
+  client.on("ready", () => {
+    isInitialized = true;
+    console.log("✅ WhatsApp Client is ready!");
+
+    // Schedule cron tasks every minute
+    cron.schedule("* * * * *", async () => {
+      console.log("Running scheduled tasks...");
+      try {
+        await dispatchTaskPsalm();
+        await dispatchTaskCommunion();
+        console.log("Scheduled tasks completed.");
+      } catch (error) {
+        console.error("Error running scheduled tasks:", error);
+      }
+    });
+  });
+
+  client.on("message", (mes) => {
+    console.log("📩 Message Received:", mes.body);
+  });
+
+  client.on("disconnected", async (reason) => {
+    console.log(`⚠️ Client disconnected due to: ${reason}`);
+    isInitialized = false;
+    try {
+      await client.destroy();
+      client = null;
+      console.log("Reinitializing client...");
+      await initializeWhatsappClient();
+    } catch (error) {
+      console.error("Error during reinitialization:", error);
+    }
+  });
+
+  try {
+    await client.initialize();
+    console.log("✅ WhatsApp Client initialized successfully");
+    console.log("Client Info:", client.info);
+    return client;
+  } catch (err) {
+    isInitialized = false;
+    console.error("❌ Failed to initialize WhatsApp Client:", err);
+    throw err;
+  }
+}
+
+// Getter for the client (ensure it's initialized first)
+export function getClient() {
+  if (!client)
+    throw new Error(
+      "WhatsApp client not initialized. Call initializeWhatsappClient() first."
+    );
+  return client;
+}
 
 // const client = new Client({
 //   authStrategy: new LocalAuth(),
 // });
 
 // Generate QR code for authentication
-client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
-  qrcode.toFile("qr.png", qr);
-  console.log("Scan this QR code with WhatsApp:");
-});
-
-// Log when the client is ready
-client.on("ready", () => {
-  console.log("WhatsApp Client is ready!");
-  // dispatchTaskPsalm();
-  // dispatchTaskCommunion();
-  cron.schedule("* * * * *", async () => {
-    console.log("Running scheduled tasks...");
-    try {
-      await dispatchTaskPsalm();
-      await dispatchTaskCommunion();
-      console.log("Scheduled tasks completed.");
-    } catch (error) {
-      console.error("Error running scheduled tasks:", error);
-    }
-  });
-});
-client.on("message", (mes) => {
-  console.log("message Received " + mes.body);
-});
-
-// Start the client
-client.initialize().catch((err) => {
-  console.log("Failed Initialization", err);
-});
-console.log("DATA REACHED HERE");
 // Function to send notifications to a WhatsApp group
 async function Notifications(message) {
+  const client = getClient(); // Will throw if client isn't ready
+  console.log("Sending message:", message);
+  console.log("Notifications Clients:", client);
   try {
     console.log("Sending message:", message);
     // console.log("Notifications:", client);
@@ -91,7 +177,6 @@ async function Notifications(message) {
     console.error("Error sending message:", error);
   }
 }
-
 const sendSMSNotification = async (message, mobileNumber) => {
   // console.log(0, dotenv.config());
   // console.log(1, process.env.ACCOUNT_SSID);

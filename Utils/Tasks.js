@@ -107,8 +107,8 @@ async function dispatchTaskCommunion() {
     // Send the message via Notifications
     await Notifications(getMultipleMessages);
 
-    await sendSMSNotification(getMultipleMessages, user1_mobile);
-    await sendSMSNotification(getMultipleMessages, user2_mobile);
+    // await sendSMSNotification(getMultipleMessages, user1_mobile);
+    // await sendSMSNotification(getMultipleMessages, user2_mobile);
 
     console.log(`multiple user Task sent:`);
 
@@ -124,7 +124,7 @@ async function dispatchTaskCommunion() {
         const userPhoneNumber = task.user.mobileNumber;
         // Send the message via Notifications
         await Notifications(getMessage);
-        await sendSMSNotification(getMessage, userPhoneNumber);
+        // await sendSMSNotification(getMessage, userPhoneNumber);
         // console.log(`Task sent: ${task.user.surname}`);
 
         // Add a delay between messages (e.g., 3 seconds)
