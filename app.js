@@ -24,7 +24,7 @@ app.use(cors());
 const baseurl = "/api/v1";
 app.use(`${baseurl}/user`, userRoutes);
 app.use(`${baseurl}/task`, taskRoute);
-
+app.get("/health", (req, res) => res.sendStatus(200));
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
