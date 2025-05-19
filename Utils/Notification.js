@@ -27,42 +27,37 @@ export async function initializeWhatsappClient() {
     console.log("WhatsApp client is already initialized");
     return client;
   }
-
-  // client = new Client({
-  //   authStrategy: new LocalAuth({
-  //     dataPath: "./wwebjs_auth", // Persistent location
-  //   }),
-  //   puppeteer: {
-  //     headless: true,
-  //     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-  //     args: [
-  //       "--no-sandbox",
-  //       "--disable-setuid-sandbox",
-  //       "--disable-dev-shm-usage",
-  //       "--single-process",
-  //       "--disable-gpu",
-  //       "--window-size=1920x1080",
-  //       "--disable-software-rasterizer",
-  //     ],
-  //   },
-  //   restartOnCrash: true,
-  // });
   client = new Client({
+    // puppeteer: {
+    //   args: [
+    //     "--no-sandbox",
+    //     "--disable-setuid-sandbox",
+    //     "--disable-dev-shm-usage", // Add this for Docker
+    //     "--disable-accelerated-2d-canvas",
+    //     "--no-first-run",
+    //     "--no-zygote",
+    //     "--single-process", // <- this one doesn't work on Windows
+    //     "--disable-gpu",
+    //   ],
+    //   // headless: true,
+    //   session: null, // Force fresh session (optional)
+    // },
     puppeteer: {
-      executablePath:
-        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium",
+      headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage", // Add this for Docker
+        "--disable-dev-shm-usage", // Prevents "/dev/shm" issues in Docker
         "--disable-accelerated-2d-canvas",
         "--no-first-run",
         "--no-zygote",
-        "--single-process", // <- this one doesn't work on Windows
+        "--single-process", // Reduces crashes in low-resource environments
         "--disable-gpu",
       ],
-      headless: true,
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     },
+    session: null, // Force fresh session (optional)
   });
   client.on("qr", async (qr) => {
     console.log("QR code received, generating...");
