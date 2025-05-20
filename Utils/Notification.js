@@ -54,6 +54,8 @@ export async function initializeWhatsappClient() {
         "--single-process", // Reduces crashes in low-resource environments
         "--disable-gpu",
       ],
+      executablePath: "/usr/bin/chromium",
+
       // executablePath:
       //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     },
