@@ -7,6 +7,7 @@ import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Tasks.js";
 import twilio from "twilio";
 import { v2 as cloudinary } from "cloudinary";
 import cron from "node-cron"; // ✅ Added missing import
+import puppeteer from "puppeteer";
 
 dotenv.config();
 
@@ -59,12 +60,11 @@ export async function initializeWhatsappClient() {
     //   // executablePath:
     //   //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     // },
-    puppeteer: {
-      executablePath: puppeteer.executablePath(), // ← this uses Puppeteer's bundled Chromium
+    uppeteer: {
+      executablePath: puppeteer.executablePath(), // ✅ use bundled Chromium
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      args: ["--no-sandbox", "--disable-setuid-sandbox"], // ✅ required for Render
     },
-    session: null, // Force fresh session (optional)
   });
   client.on("qr", async (qr) => {
     console.log("QR code received, generating...");
