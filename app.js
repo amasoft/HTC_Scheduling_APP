@@ -30,7 +30,7 @@ function delay(ms) {
 }
 
 app.listen(PORT, async function () {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
   connectDB();
 
   try {
