@@ -60,10 +60,14 @@ export async function initializeWhatsappClient() {
     //   // executablePath:
     //   //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     // },
-    uppeteer: {
+    puppeteer: {
       executablePath: puppeteer.executablePath(), // ✅ use bundled Chromium
+      //   executablePath: "/usr/bin/chromium",
+      // executablePath:
+      //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"], // ✅ required for Render
+      userDataDir: "./session_data", // 👈 this is the key
     },
   });
   client.on("qr", async (qr) => {
@@ -103,7 +107,7 @@ export async function initializeWhatsappClient() {
   });
 
   client.on("message", (mes) => {
-    console.log("📩 Message Received:", mes.body);
+    // console.log("📩 Message Received:", mes.body);
   });
 
   client.on("disconnected", async (reason) => {
@@ -149,7 +153,7 @@ export function getClient() {
 async function Notifications(message) {
   const client = getClient(); // Will throw if client isn't ready
   console.log("Sending message:", message);
-  console.log("Notifications Clients:", client);
+  // console.log("Notifications Clients:", client);
   try {
     console.log("Sending message:", message);
     // console.log("Notifications:", client);
