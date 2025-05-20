@@ -61,7 +61,7 @@ export async function initializeWhatsappClient() {
     //   //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
     // },
     puppeteer: {
-      executablePath: puppeteer.executablePath(), // ✅ use bundled Chromium
+      // executablePath: puppeteer.executablePath(), // ✅ use bundled Chromium
       //   executablePath: "/usr/bin/chromium",
       // executablePath:
       //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
