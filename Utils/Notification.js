@@ -149,7 +149,7 @@ export function getClient() {
 async function Notifications(message) {
   const client = getClient(); // Will throw if client isn't ready
   console.log("Sending message:", message);
-  console.log("Notifications Clients:", client);
+  // console.log("Notifications Clients:", client);
   try {
     console.log("Sending message:", message);
     // console.log("Notifications:", client);
