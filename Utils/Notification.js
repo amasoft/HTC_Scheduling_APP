@@ -42,22 +42,27 @@ export async function initializeWhatsappClient() {
     //   // headless: true,
     //   session: null, // Force fresh session (optional)
     // },
-    puppeteer: {
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage", // Prevents "/dev/shm" issues in Docker
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--single-process", // Reduces crashes in low-resource environments
-        "--disable-gpu",
-      ],
-      executablePath: "/usr/bin/chromium",
+    // puppeteer: {
+    //   headless: true,
+    //   args: [
+    //     "--no-sandbox",
+    //     "--disable-setuid-sandbox",
+    //     "--disable-dev-shm-usage", // Prevents "/dev/shm" issues in Docker
+    //     "--disable-accelerated-2d-canvas",
+    //     "--no-first-run",
+    //     "--no-zygote",
+    //     "--single-process", // Reduces crashes in low-resource environments
+    //     "--disable-gpu",
+    //   ],
+    //   executablePath: "/usr/bin/chromium",
 
-      // executablePath:
-      //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
+    //   // executablePath:
+    //   //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
+    // },
+    puppeteer: {
+      executablePath: puppeteer.executablePath(), // ← this uses Puppeteer's bundled Chromium
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     },
     session: null, // Force fresh session (optional)
   });
