@@ -167,7 +167,7 @@ async function Notifications(message) {
     // Find the group by name
     const group = chats.find((chat) => {
       // console.log("GRoup>>  " + chat.isGroup);
-      // console.log("chat.name>>  " + chat.name);
+      console.log("chat.name>>  " + chat.name);
       // return chat.isGroup && chat.name === "Testing"; // Ensure the group name matches exactly
       return chat.name === "Testing"; // Ensure the group name matches exactly
     });

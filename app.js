@@ -29,7 +29,7 @@ app.use(`${baseurl}/task`, taskRoute);
 
 // app.get("/health", (req, res) => res.sendStatus(200));
 app.get("/health", (req, res) => {
-  res.sendStatus(200);
+  // res.sendStatus(200);
 
   return res.status(200).json({
     message: "Health Checks....",

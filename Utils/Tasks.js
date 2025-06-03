@@ -128,8 +128,6 @@ async function dispatchTaskCommunion() {
         // Send the message via Notifications
         await Notifications(getMessage);
         await sendNotificationBySMS(userPhoneNumber, getMessage);
-        // await sendSMSNotification(getMessage, userPhoneNumber);
-        // console.log(`Task sent: ${task.user.surname}`);
 
         // Add a delay between messages (e.g., 3 seconds)
         await delay(3000);
