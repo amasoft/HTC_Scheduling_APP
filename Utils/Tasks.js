@@ -1,4 +1,5 @@
 import { fetchNextTask } from "../src/Controller/TaskControlller.js";
+import { sendNotificationBySMS } from "./autoSMS.js";
 import { Notifications, sendSMSNotification } from "./Notification.js";
 
 // Delay function
@@ -84,6 +85,7 @@ async function dispatchTaskCommunion() {
 
   const task_type = "Pre-Communion Solo";
   const tasks = await fetchNextTask(task_type);
+  console.log("TASK>>>" + JSON.stringify(tasks));
   if (!tasks || tasks.length === 0) {
     console.log("NO DATA");
 
@@ -121,9 +123,11 @@ async function dispatchTaskCommunion() {
         const taskDate = new Date(`${task.DueDate}`).toDateString();
         const taskRole = task.Role;
         const getMessage = await singleUser(name, taskDate, taskRole);
-        const userPhoneNumber = task.user.mobileNumber;
+        var userPhoneNumber = task.user.mobileNumber;
+        userPhoneNumber = userPhoneNumber.slice(1);
         // Send the message via Notifications
         await Notifications(getMessage);
+        await sendNotificationBySMS(userPhoneNumber, getMessage);
         // await sendSMSNotification(getMessage, userPhoneNumber);
         // console.log(`Task sent: ${task.user.surname}`);
 

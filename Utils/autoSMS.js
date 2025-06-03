@@ -1,41 +1,41 @@
-const { error } = require("console");
-const twilio = require("twilio");
-const dotenv = require("dotenv");
+import request from "request";
 
-module.exports.sendSMS = (req, res, next) => {
-  console.log(0, dotenv.config());
-  console.log(1, process.env.ACCOUNT_SSID);
-  console.log(0, process.env.AUT_TOKEN);
-  const accountssid = process.env.ACCOUNT_SSID;
-  const autToken = process.env.AUT_TOKEN;
+export const sendNotificationBySMS = async (mobile_number, message) => {
+  console.log("sendNotificationBySMS>>" + message + "  " + mobile_number);
 
-  const client = new twilio(accountssid, autToken);
+  var data = {
+    // to: "2347880234567",
+    // to: `${mobile_number}`,/
+    // to: "2348021193234",
+    // to: "2347063011279",
+    to: "2347064795401",
 
-  // const fromNumber = "+15177934255";// prevoiusly
-  const fromNumber = process.env.FROM_NUMBER; // currently
-  const receipentNumber = "+2349060834999";
-  client.messages
-    .create({
-      body: "this is a test from twilio node js ",
-      from: fromNumber,
-      to: receipentNumber,
-    })
-    .then((message) => console.log("message sent succesfully"))
-    .catch((error) => console.log("error sending message ", error));
-};
-module.exports.makeCall = (req, res, next) => {
-  const accountssid = process.env.ACCOUNT_SSID;
-  const autToken = process.env.AUT_TOKEN;
-  const client = new twilio.Twilio(accountssid, autToken);
-  const toPhoneNumber = "+2349060834999"; // Phone number to call
-  const fromPhoneNumber = fromNumber; // Your Twilio phone number
-  // Make a call
-  client.calls
-    .create({
-      url: "http://demo.twilio.com/docs/voice.xml", // A URL for Twilio to fetch instructions (you can replace this with your own XML or TwiML)
-      to: toPhoneNumber,
-      from: fromPhoneNumber,
-    })
-    .then((call) => console.log(`Call SID: ${call.sid}`))
-    .catch((error) => console.error(error));
+    // to: mobile_number,
+    from: "HTCSTJOHN",
+    // sms: "Hi there, te
+    // sting Termii",
+    sms: `${message}`,
+    type: "plain",
+    api_key: "TLaxLhkupsqADlgnAfFAdSxaHZCYDGeveHBZDaquKaZqlUnTyjfvsabKehwlvR",
+    channel: "generic",
+    // channel: "dnd",
+    media: {
+      url: "https://media.example.com/file",
+      caption: "your media file",
+    },
+  };
+  var options = {
+    method: "POST",
+    // url: "https://BASE_URL/api/sms/send",
+    url: "https://v3.api.termii.com/api/sms/send",
+    headers: {
+      "Content-Type": ["application/json", "application/json"],
+    },
+    body: JSON.stringify(data),
+  };
+  console.log("SMS PAYLOAD" + JSON.stringify(options));
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log("new response " + response.body);
+  });
 };
