@@ -7,6 +7,8 @@ import taskRoute from "./src/Routes/TasksRoutes.js";
 import { getClient, initializeWhatsappClient } from "./Utils/Notification.js";
 import { dispatchTaskCommunion, dispatchTaskPsalm } from "./Utils/Tasks.js";
 import dotenv from "dotenv";
+import axios from "axios";
+import { testsms } from "./Utils/sendmail.js";
 
 import { Notifications } from "./Utils/Notification.js";
 dotenv.config();
@@ -24,13 +26,22 @@ app.use(cors());
 const baseurl = "/api/v1";
 app.use(`${baseurl}/user`, userRoutes);
 app.use(`${baseurl}/task`, taskRoute);
-app.get("/health", (req, res) => res.sendStatus(200));
+
+// app.get("/health", (req, res) => res.sendStatus(200));
+app.get("/health", (req, res) => {
+  res.sendStatus(200);
+
+  return res.status(200).json({
+    message: "Health Checks....",
+  });
+});
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+// testsms();
 
 app.listen(PORT, async function () {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
   connectDB();
 
   try {

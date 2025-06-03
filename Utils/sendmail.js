@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import axios from "axios";
+
 const sendmail = async (verifycode, email) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -35,5 +37,30 @@ const sendmail = async (verifycode, email) => {
     }
   });
 };
+export const testsms = async () => {
+  const data = {
+    to: "2347064795401",
+    from: "HTCSTJOHN",
+    sms: "Hi there, testing Termii",
+    type: "plain",
+    api_key: "TLaxLhkupsqADlgnAfFAdSxaHZCYDGeveHBZDaquKaZqlUnTyjfvsabKehwlvR", // replace with your real Termii API key
+    channel: "generic",
+  };
 
+  try {
+    const response = await axios.post(
+      "https://api.ng.termii.com/api/sms/send",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("Information>>>" + response);
+    console.log(response.data);
+  } catch (error) {
+    console.error("Error sending SMS:", error.response?.data || error.message);
+  }
+};
 export default sendmail;

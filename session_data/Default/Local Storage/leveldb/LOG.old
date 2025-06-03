@@ -1,2 +1,3 @@
-2025/05/20-19:33:48.125 45d0 Creating DB C:\Users\user\Documents\Official Projects\HTCApp\session_data\Default\Local Storage\leveldb since it was missing.
-2025/05/20-19:33:48.148 45d0 Reusing MANIFEST C:\Users\user\Documents\Official Projects\HTCApp\session_data\Default\Local Storage\leveldb/MANIFEST-000001
+2025/06/03-22:10:57.421 310c Reusing MANIFEST C:\Users\user\Documents\Official Projects\HTCApp\session_data\Default\Local Storage\leveldb/MANIFEST-000001
+2025/06/03-22:10:57.422 310c Recovering log #19
+2025/06/03-22:10:57.468 310c Reusing old log C:\Users\user\Documents\Official Projects\HTCApp\session_data\Default\Local Storage\leveldb/000019.log 
