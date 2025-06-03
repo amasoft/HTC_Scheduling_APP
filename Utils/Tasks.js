@@ -127,7 +127,7 @@ async function dispatchTaskCommunion() {
         userPhoneNumber = userPhoneNumber.slice(1);
         // Send the message via Notifications
         await Notifications(getMessage);
-        await sendNotificationBySMS(userPhoneNumber, getMessage);
+        // await sendNotificationBySMS(userPhoneNumber, getMessage);
 
         // Add a delay between messages (e.g., 3 seconds)
         await delay(3000);
