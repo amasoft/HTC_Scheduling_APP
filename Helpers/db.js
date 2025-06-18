@@ -13,8 +13,8 @@ const connectDB = async () => {
     .connect(
       "mongodb+srv://jwt:v2Z6Njhu4g85nPpP@cluster0.bjerbjj.mongodb.net/htcdb",
       {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
         // useCreateIndex: true,
       }
     )
