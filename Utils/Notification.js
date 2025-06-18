@@ -65,6 +65,7 @@ export async function initializeWhatsappClient() {
       //   executablePath: "/usr/bin/chromium",
       // executablePath:
       //   process.env.PUPPETEER_EXECUTABLE_PATH || "/usr/bin/chromium-browser",
+      puppeteer,
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"], // ✅ required for Render
       userDataDir: "./session_data", // 👈 this is the key
