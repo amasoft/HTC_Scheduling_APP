@@ -1,3 +1,14 @@
-2025/06/18-21:10:18.753 18dc Reusing MANIFEST /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/MANIFEST-000001
-2025/06/18-21:10:18.755 18dc Recovering log #29
-2025/06/18-21:10:18.756 18dc Reusing old log /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/000029.log 
+2025/06/18-21:12:01.342 1ab8 Reusing MANIFEST /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/MANIFEST-000001
+2025/06/18-21:12:01.343 1ab8 Recovering log #29
+2025/06/18-21:12:01.343 1ab8 Level-0 table #32: started
+2025/06/18-21:12:01.346 1ab8 Level-0 table #32: 16440 bytes OK
+2025/06/18-21:12:01.349 1ab8 Delete type=0 #29
+2025/06/18-21:12:01.352 1ab8 Compacting 4@0 + 1@1 files
+2025/06/18-21:12:01.363 1ab8 Generated table #34@0: 262 keys, 7895 bytes
+2025/06/18-21:12:01.363 1ab8 Compacted 4@0 + 1@1 files => 7895 bytes
+2025/06/18-21:12:01.364 1ab8 compacted to: files[ 0 1 1 0 0 0 0 ]
+2025/06/18-21:12:01.365 1ab8 Delete type=2 #30
+2025/06/18-21:12:01.365 1ab8 Delete type=2 #27
+2025/06/18-21:12:01.365 1ab8 Delete type=2 #24
+2025/06/18-21:12:01.365 1ab8 Delete type=2 #32
+2025/06/18-21:12:01.365 1ab8 Delete type=2 #21
