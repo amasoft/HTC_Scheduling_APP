@@ -1,3 +1,6 @@
-2025/06/19-05:10:30.172 34e1 Reusing MANIFEST /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/MANIFEST-000001
-2025/06/19-05:10:30.172 34e1 Recovering log #33
-2025/06/19-05:10:30.173 34e1 Reusing old log /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/000033.log 
+2025/06/19-05:37:38.265 51e7 Reusing MANIFEST /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/MANIFEST-000001
+2025/06/19-05:37:38.266 51e7 Recovering log #33
+2025/06/19-05:37:38.270 51e7 Reusing old log /home/patrick/Documents/projects/HTC_Scheduling_APP/session_data/Default/Local Storage/leveldb/000033.log 
+2025/06/19-05:39:38.909 5230 Level-0 table #37: started
+2025/06/19-05:39:38.911 5230 Level-0 table #37: 16067 bytes OK
+2025/06/19-05:39:38.912 5230 Delete type=0 #33
